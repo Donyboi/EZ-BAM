@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <title>EZ-BAM</title>
+  </head>
+
+  <body class="bg-[#0c0c0c] text-gray-200 min-h-screen font-sans">
+
+    <!-- NAVBAR -->
+    {% include 'components/navbar.html.jinja' %}
+
+    <!-- HERO SECTION -->
+    <section class="flex flex-col items-center text-center mt-16 px-4">
+      <h1 class="text-4xl md:text-5xl font-bold 
+                 bg-gradient-to-b from-gray-100 to-gray-400 bg-clip-text text-transparent">
+        Welcome to <span class="text-indigo-400">EZ-BAM</span>
+      </h1>
+
+      <p class="mt-6 max-w-2xl text-gray-400 text-lg md:text-xl leading-relaxed">
+        Your one-stop shop for premium gear, tools, and accessories — crafted for performance
+        and built to last.
+      </p>
+
+      <div class="mt-10 flex gap-4">
+        <a href="/shop"
+          class="px-8 py-3 rounded-xl text-lg font-semibold
+                 bg-gradient-to-b from-gray-700 to-gray-900 shadow-lg hover:shadow-xl
+                 transition">
+          Shop Now
+        </a>
+
+        <a href="/about"
+          class="px-8 py-3 rounded-xl text-lg font-semibold border border-gray-500/40
+                 hover:bg-gray-800 transition">
+          Learn More
+        </a>
+      </div>
+    </section>
+
+    <!-- FEATURE CARDS -->
+    <section class="mt-24 px-6 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <!-- CARD 1 -->
+      <div class="p-6 rounded-2xl bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl 
+                  border border-gray-700/40">
+        <h2 class="text-xl font-bold mb-2">Fast Shipping</h2>
+        <p class="text-gray-400">We process orders quickly and deliver right to your door.</p>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="p-6 rounded-2xl bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl 
+                  border border-gray-700/40">
+        <h2 class="text-xl font-bold mb-2">Quality Gear</h2>
+        <p class="text-gray-400">Our products are built with durability and performance in mind.</p>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="p-6 rounded-2xl bg-gradient-to-b from-gray-800 to-gray-900 shadow-xl 
+                  border border-gray-700/40">
+        <h2 class="text-xl font-bold mb-2">24/7 Support</h2>
+        <p class="text-gray-400">Need help? Our team is always available to assist you.</p>
+      </div>
+
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mt-20 py-10 text-center text-gray-500 text-sm border-t border-gray-800">
+      © {{ current_year or "2025" }} EZ-BAM • All rights reserved.
+    </footer>
+
+  </body>
+</html>
