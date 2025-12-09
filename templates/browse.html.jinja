@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <title>EZ-BAM</title>
+  </head>
+
+  <body class="bg-[#0c0c0c] text-gray-200 min-h-screen font-sans">
+
+    <!-- NAVBAR -->
+    {% include 'components/navbar.html.jinja' %}
+
+    <!-- HERO SECTION -->
+    <section class="flex flex-col items-center text-center mt-16 px-4">
+      <h1 class="text-4xl md:text-5xl font-bold 
+                 bg-gradient-to-b from-gray-100 to-gray-400 bg-clip-text text-transparent">
+        Welcome to <span class="text-indigo-400">EZ-BAM</span>
+      </h1>
+
+      <p class="mt-6 max-w-2xl text-gray-400 text-lg md:text-xl leading-relaxed">
+        Your one-stop shop for premium gear, tools, and accessories — crafted for performance
+        and built to last.
+      </p>
+
+      <div class="mt-10 flex gap-4">
+        <a href="/shop"
+          class="px-8 py-3 rounded-xl text-lg font-semibold
+                 bg-gradient-to-b from-gray-700 to-gray-900 shadow-lg hover:shadow-xl
+                 transition">
+          Shop Now
+        </a>
+
+        <a href="/about"
+          class="px-8 py-3 rounded-xl text-lg font-semibold border border-gray-500/40
+                 hover:bg-gray-800 transition">
+          Learn More
+        </a>
+      </div>
+    </section>
+  </body>
+</html>
