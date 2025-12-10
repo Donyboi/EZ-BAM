@@ -26,15 +26,14 @@ def index():
 
 @app.route("/browse")
 def browse():
-    return render_template("homepage.html.jinja")
     connection = connect_db()
     
-    cursor = connection.cursor
+    cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM `Product`")
 
     result = cursor.fetchall()
 
+    connection.close()
 
-    connect.close()
-    return render_template("browser.html.jinja")
+    return render_template("browse.html.jinja", products=result)
