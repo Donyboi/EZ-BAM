@@ -16,7 +16,6 @@
             },
             "args": [
                 "run",
-                
             ],
             "jinja": true,
             "autoStartBrowser": false

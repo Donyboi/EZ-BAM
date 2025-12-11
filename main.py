@@ -26,15 +26,30 @@ def index():
 
 @app.route("/browse")
 def browse():
-    return render_template("homepage.html.jinja")
     connection = connect_db()
     
-    cursor = connection.cursor
+    cursor = connection.cursor()
 
     cursor.execute("SELECT * FROM `Product`")
 
     result = cursor.fetchall()
 
+    connection.close()
 
-    connect.close()
-    return render_template("browser.html.jinja")
+    return render_template("browse.html.jinja", products=result)
+
+
+@app.route("/product/<product_id>")
+def product_page(product_id):
+
+    connection =connect_db()
+
+    cursor = connection.cursor()
+
+    cursor.execute( "SELECT * FROM `Product` WHERE `ID` = %s",(product_id))
+
+    result = cursor.fetchone()
+
+    connection.close()
+
+    return render_template("product.html.jinja", product=result)
