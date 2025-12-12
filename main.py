@@ -1,4 +1,4 @@
-from flask import Flask,render_template
+from flask import Flask,render_template,request,redirect,url_for
 
 import pymysql
 
@@ -53,3 +53,46 @@ def product_page(product_id):
     connection.close()
 
     return render_template("product.html.jinja", product=result)
+@app.route("/login", methods=["GET","POST"])
+def login():
+    if request.method == "POST":
+
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == "admin" and password == "password":
+            return redirect(url_for("index"))
+    
+        else:
+            return render_template("login.html.jinja",
+                                error= "Invalid username or password")
+    return render_template("login.html.jinja")
+
+if __name__ == "_main_":
+    app.run(debug=True)
+
+
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        
+        if not username or not password:
+            return render_template('signup.html.jinja', error='Username and password required')
+        
+        connection = connect_db()
+        cursor = connection.cursor()
+        
+        cursor.execute("SELECT * FROM `User` WHERE `username` = %s", (username,))
+        if cursor.fetchone():
+            connection.close()
+            return render_template('signup.html.jinja', error='Username already exists')
+        
+        cursor.execute("INSERT INTO `User` (username, password) VALUES (%s, %s)", (username, password))
+        connection.close()
+        
+        return redirect(url_for('login'))
+    
+    return render_template('signup.html.jinja')
