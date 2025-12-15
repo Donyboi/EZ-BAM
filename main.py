@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for
+from flask import Flask,render_template,request,redirect,url_for, flash
 
 import pymysql
 
@@ -6,7 +6,11 @@ from dynaconf import Dynaconf
 
 app = Flask(__name__)
 
+
+
 config = Dynaconf(settings_file=["setting.toml"])
+
+app.secret_key = config.secret_key
 
 def connect_db():
     conn = pymysql.connect(
@@ -76,23 +80,33 @@ if __name__ == "_main_":
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        
-        if not username or not password:
-            return render_template('signup.html.jinja', error='Username and password required')
-        
-        connection = connect_db()
-        cursor = connection.cursor()
-        
-        cursor.execute("SELECT * FROM `User` WHERE `username` = %s", (username,))
-        if cursor.fetchone():
-            connection.close()
-            return render_template('signup.html.jinja', error='Username already exists')
-        
-        cursor.execute("INSERT INTO `User` (username, password) VALUES (%s, %s)", (username, password))
-        connection.close()
-        
-        return redirect(url_for('login'))
+        username = request.form["username"]
+
+        email = request.form["email"]
+
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        address = request.form["address"]
+
+        if password != confirm_password:
+            flash("PASSWORDS DO NOT MATCH >:(")
+        elif len(password) < 8:
+            flash("Password is to Short")
+        else:
+            connect_db
+
+            connection = connect_db()
     
-    return render_template('signup.html.jinja')
+            cursor = connection.cursor()
+
+            cursor.execute("""
+                INSERT INTO `User` (`Username, `Password`, `Email`, Address`)
+                VALUES (%s, %s, %s, %s)
+            """, ( username ,password ,email ,address))
+
+            return redirect('/login')
+            
+            
+
+    return render_template("signup.html.jinja")
