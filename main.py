@@ -1,4 +1,5 @@
 from flask import Flask,render_template,request,redirect,url_for, flash
+from flask_login import LoginManager, login_user
 
 import pymysql
 
@@ -11,6 +12,42 @@ app = Flask(__name__)
 config = Dynaconf(settings_file=["setting.toml"])
 
 app.secret_key = config.secret_key
+
+login_manager = LoginManager( app )
+
+class User:
+    is_authenticated = True
+    is_active = True
+    is_anoonymous = False
+
+    def __init__(self, result):
+        self.name = result['Username']
+        self.email = result['Email']
+        self.address = result['Address']
+        self.id = result['ID']
+    
+    def get_id(self):
+        return str(self.id)
+
+@login_manager.user_loader
+def load_user(user_id):
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute(" SELECT * FROM `User` WHERE `ID` = %s ", ( user_id ))
+
+    result = cursor.fetchone()
+
+    connection.close()
+
+    if result is None:
+        return None
+    
+    return User(result)
+
+
+
+
 
 def connect_db():
     conn = pymysql.connect(
@@ -61,15 +98,27 @@ def product_page(product_id):
 def login():
     if request.method == "POST":
 
-        username = request.form.get("username")
+        email = request.form.get("email")
         password = request.form.get("password")
 
-        if username == "admin" and password == "password":
-            return redirect(url_for("index"))
-    
-        else:
-            return render_template("login.html.jinja",
-                                error= "Invalid username or password")
+        connection =connect_db()
+
+        cursor = connection.cursor()
+
+        cursor.execute("SELECT * FROM  `User` WHERE `email` = %s",(email))
+
+        result = cursor.fetchone()
+
+
+        connection.close()
+
+        if result is None:
+            flash("No User found")
+        elif password != result["Password"]:
+            flash("Incorrect password")
+        else:login_user(User (result))
+        return redirect ("/browse")
+
     return render_template("login.html.jinja")
 
 if __name__ == "_main_":
@@ -99,13 +148,16 @@ def signup():
             connection = connect_db()
     
             cursor = connection.cursor()
-
-            cursor.execute("""
-                INSERT INTO `User` (`Username, `Password`, `Email`, Address`)
-                VALUES (%s, %s, %s, %s)
-            """, ( username ,password ,email ,address))
-
-            return redirect('/login')
+            try:
+                cursor.execute("""
+                    INSERT INTO `User` (`Username`, `Email`, `Password`, `Address`)
+                    VALUES (%s, %s, %s, %s)
+                """, ( username ,email ,password ,address))
+                connection.close()
+            except pymysql.err.IntegrityError:
+                flash("User with that email already exist")
+            else:
+                return redirect('/login')
             
             
 
