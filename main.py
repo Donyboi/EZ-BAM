@@ -1,5 +1,5 @@
-from flask import Flask,render_template,request,redirect,url_for, flash
-from flask_login import LoginManager, login_user
+from flask import Flask,render_template,request,redirect,url_for, flash,abort
+from flask_login import LoginManager, login_user, login_required, UserMixin, logout_user, current_user
 
 import pymysql
 
@@ -14,6 +14,8 @@ config = Dynaconf(settings_file=["setting.toml"])
 app.secret_key = config.secret_key
 
 login_manager = LoginManager( app )
+
+login_manager.login_view = '/login'
 
 class User:
     is_authenticated = True
@@ -45,7 +47,9 @@ def load_user(user_id):
     
     return User(result)
 
-
+@app.errorhandler(404)
+def page_not_found(e):
+        return render_template("404.html.jinja"), 404
 
 
 
@@ -92,6 +96,9 @@ def product_page(product_id):
     result = cursor.fetchone()
 
     connection.close()
+
+    if result is None:
+        abort(404)
 
     return render_template("product.html.jinja", product=result)
 @app.route("/login", methods=["GET","POST"])
@@ -159,6 +166,18 @@ def signup():
             else:
                 return redirect('/login')
             
-            
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("you have been terminated from EZ-BAM :)")
+    return redirect('/')
+            
+            
     return render_template("signup.html.jinja")
+
+
+
+
+
