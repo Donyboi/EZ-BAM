@@ -101,6 +101,29 @@ def product_page(product_id):
         abort(404)
 
     return render_template("product.html.jinja", product=result)
+
+@app.route("/product/<product_id>/add_to_cart", methods=["POST"])
+@login_required
+def app_to_cart(product_id):
+
+    quantity = request.form["qty:"]
+
+    connection = connect_db()
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        INSERT INTO `Cart` (`Quantity`, `ProductID`, `UserID`)
+        VALUES (%s, %s, %s)
+        ON DUPLICATE KEY UPDATE
+        `Quantity` = `Quantity` + %s
+    """, (quantity, product_id, current_user.id, quantity))
+    
+
+
+    return redirect('/cart')
+
+
+
 @app.route("/login", methods=["GET","POST"])
 def login():
     if request.method == "POST":
