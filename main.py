@@ -197,6 +197,8 @@ def logout():
     flash("you have been terminated from EZ-BAM :)")
     return redirect('/')
             
+
+
             
     return render_template("signup.html.jinja")
 
