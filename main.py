@@ -203,6 +203,24 @@ def logout():
     return render_template("signup.html.jinja")
 
 
+@app.route("/cart")
+@login_required
+def cart():
+    connection = connect_db()
 
+    cursor = connection.cursor()
+
+    cursor.execute("""
+        SELECT * FROM `Cart`
+        Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
+        WHERE `UserID` = %s             
+                   
+    """,(current_user.id))
+
+    result = cursor.fetchall()
+
+    connection.close()
+
+    return render_template("cart.html.jinja", cart=result)
 
 
