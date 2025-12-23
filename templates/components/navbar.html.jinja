@@ -23,6 +23,7 @@
         
         
     <nav class="flex justify-between bg-gray-900/50 backdrop-blur-md px-5 py-3 rounded-3xl border border-gray-400/40 shadow-xl">
+    {{current_user.username}}
         <div class="hidden xl:flex items-center space-x-5 items-center">
           <a class="hover:text-gray-200" href="#">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,8 +48,16 @@
               </svg>
               </a>
             <div class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+            {%if not current_user.is_authenticated%}
               <a href="/login" class="block px-4 py-2 hover:bg-gray-700 text-white rounded-t-lg">Login</a>
+
               <a href="/signup" class="block px-4 py-2 hover:bg-gray-700 text-white rounded-b-lg">Sign Up</a>
+              {%else%}
+              <div>
+                  Hi,{{current_user.name}}
+              </div>
+              <a href="/logout" class ="block px 4 py-2 hover:bg-gray-700 text-white rounded-b-lg">Logout</a>
+            {%endif%}
             </div>
           </div>   
         </div>
