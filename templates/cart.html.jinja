@@ -16,9 +16,19 @@
         <h1 class=""text-xl font-blod>Your Cart</h1>
         {%for x in cart%}
             <div class="cart-row">
-                <img src="{{x['Image']}}">
-                <div>{{x['Name']}}</div>
-                <div>{{x['Quantity']}}</div>
+                <img src="{{x['Image']}}"
+                class ="w-20 h-20 object-cover rounded-md border">
+                <div class="text-lg font semibold ml-4">{{x['Name']}}</div>
+
+    
+                <div class="flex items-center justify-center space-x-2">
+                    <form method="post" action="/cart/{{ x ['ProductID']}}/update_qty">
+                    <input class="w-full" name="qty:" type="number"  value=" {{ x['Quantity']}} ">
+                    <button> type="submit">update</button>
+                    </form>
+                </div>
+
+
                 <div>F{{x['Price']}}</div>
                 <div>F{{x['Price'] * x['Quantity']}}</div>
             </div>
