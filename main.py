@@ -239,3 +239,7 @@ def update_cart(product_id):
            SET `Quantity` = %s
             WHERE `ProductID` = %s AND `UserID` = %s
         """,(new_qty, product_id, current_user.id))
+    
+    connection.close()
+    
+    return redirect("/cart")
