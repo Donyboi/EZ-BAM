@@ -224,7 +224,7 @@ def cart():
     return render_template("cart.html.jinja", cart=result)
 
 
-@app.route("/cart/<product_id>/update_qty")
+@app.route("/cart/<product_id>/update_qty", methods =["POST"])
 @login_required
 def update_cart(product_id):
 
@@ -241,5 +241,5 @@ def update_cart(product_id):
         """,(new_qty, product_id, current_user.id))
     
     connection.close()
-    
+
     return redirect("/cart")
