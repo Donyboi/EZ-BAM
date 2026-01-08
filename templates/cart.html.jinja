@@ -35,7 +35,7 @@
             {{ x['Name'] }}
         </div>
 
-        <div class="w-16 text-center bg-gray-700 text-gray-200 rounded-md">
+        <div class="w-16 text-center bg-gray-700 text-gray-200 rounded-md ml-26">
             <form method="post" action="/cart/{{ x['ProductID'] }}/update_qty">
                 <input class="w-full" name="qty" type="number" min="1" max="50"
                        value="{{ x['Quantity'] }}" onchange="this.form.submit()">
@@ -51,38 +51,29 @@
         </div>
 
         <div class="flex justify-center">
-            <button class="px-2 py-2 bg-red-700 text-white rounded hover:bg-red-800">
-                Remove
-            </button>
+            <form method="post" action="/cart/{{ x['ProductID'] }}/remove">
+                    <button type="submit" class="text-red-600 hover:underline">
+                        Remove
+                    </button>
+            </form>
         </div>
     </div>
     {% endfor %}
 </div>
 
-<div class="mt-10 bg-gray-700 shadow-lg rounded-lg p-6 w-full md:w-1/3 ml-auto text-gray-200">
-    <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
 
-    <div class="flex justify-between text-lg mb-2">
-        <span>Subtotal</span>
-        <span>${{ subtotal }}</span>
-    </div>
-
-    <div class="flex justify-between text-xl font-bold border-t pt-4">
-        <span>Total</span>
-        <span>${{ total }}</span>
-    </div>
-
-    <button class="mt-6 w-full bg-blue-900 text-white py-3 rounded-lg text-lg hover:bg-gray-700">
-        Checkout
-    </button>
-</div>
 
 {% else %}
 
 <div class="flex flex-col items-center justify-center mt-20 text-gray-300">
     <h2 class="text-3xl font-bold mb-4">Your cart is empty </h2>
-    <p class="text-lg mb-6">Looks like you havent added anything yet.</p>
-    <a href="/products"
+    <img 
+        src="/static/empty_cart.gif" 
+        class="w-auto h-auto"
+        alt="EZ-BAM"
+        class="w-auto h-auto"
+      >
+    <a href="/browse    "
        class="bg-blue-900 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition">
         Continue Shopping
     </a>
@@ -91,27 +82,27 @@
 {% endif %}
 
 </div>
+x
+
+    {% if cart and cart|length > 0 %}
+        <div class="mt-10 bg-gray-700 shadow-lg rounded-lg p-6 w-full md:w-1/3 ml-auto text-gray-200">
+
+            <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
 
 
-<div class="mt-10 bg-gray-700 shadow-lg rounded-lg p-6 w-full md:w-1/3 ml-auto text-gray-200">
 
-    <h2 class="text-2xl font-bold mb-4">Order Summary</h2>
+            <div class="flex justify-between text-xl font-bold border-t pt-4">
+                <h2>Total: {{total}}</h2>
+            
+            <a href="/checkout" class="text-white mx-2 hover:underline bg-gradient-to-b from-gray-700 to-gray-900 shadow-md px-6 py-3 rounded-xl text-white font-semibold">checkout</a>
+               
+                
+        </div>
+            
 
-    <div class="flex justify-between text-lg mb-2">
-        <span>Subtotal</span>
-        <span>${{ subtotal }}</span>
-    </div>
-
-
-    <div class="flex justify-between text-xl font-bold border-t pt-4">
-        <span>Total</span>
-        <span>${{ total }}</span>
-    </div>
-
-    <button class="mt-6 w-full bg-blue-900 text-white py-3 rounded-lg text-lg hover:bg-grey-700">
-        Checkout
-    </button>
-</div>
+            
+        </div>
+    {% endif %}
     
     </main>
   </body>
