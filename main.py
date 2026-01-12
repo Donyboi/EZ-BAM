@@ -119,8 +119,8 @@ def app_to_cart(product_id):
     """, (quantity, product_id, current_user.id, quantity))
     
 
-
-    return redirect('/cart')
+    flash("Added to Cart")
+    return redirect('/browse')
 
 
 
@@ -174,10 +174,7 @@ def signup():
         elif len(password) < 8:
             flash("Password is to Short")
         else:
-            connect_db
-
             connection = connect_db()
-    
             cursor = connection.cursor()
             try:
                 cursor.execute("""
@@ -187,9 +184,11 @@ def signup():
                 connection.close()
             except pymysql.err.IntegrityError:
                 flash("User with that email already exist")
+                connection.close()
             else:
-                return redirect('/login')
+                return redirect("/login")
             
+    return render_template("signup.html.jinja")        
 
 @app.route("/logout")
 @login_required
@@ -201,120 +200,120 @@ def logout():
 
 
             
-    return render_template("signup.html.jinja")
+    
 
 
 @app.route("/cart")
 @login_required
 def cart():
-    connection = connect_db()
+        connection = connect_db()
 
-    cursor = connection.cursor()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT * FROM `Cart`
-        Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
-        WHERE `UserID` = %s             
-                   
-    """,(current_user.id))
+        cursor.execute("""
+            SELECT * FROM `Cart`
+            Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
+            WHERE `UserID` = %s             
+                    
+        """,(current_user.id))
 
-    result = cursor.fetchall()
+        result = cursor.fetchall()
 
-    total = 0
+        total = 0
 
-    for item in result:
-        total += item["Price"] * item["Quantity"]
+        for item in result:
+            total += item["Price"] * item["Quantity"]
 
-    connection.close()
+        connection.close()
 
-    return render_template("cart.html.jinja", cart=result, total=total)
+        return render_template("cart.html.jinja", cart=result, total=total)
 
 
 @app.route("/cart/<product_id>/update_qty", methods =["POST"])
 @login_required
 def update_cart(product_id):
 
-    new_qty = request.form["qty"]
+        new_qty = request.form["qty"]
 
-    connection = connect_db()
+        connection = connect_db()
 
-    cursor = connection.cursor()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-           UPDATE `Cart`
-           SET `Quantity` = %s
-            WHERE `ProductID` = %s AND `UserID` = %s
-        """,(new_qty, product_id, current_user.id))
-    
-    connection.close()
+        cursor.execute("""
+            UPDATE `Cart`
+            SET `Quantity` = %s
+                WHERE `ProductID` = %s AND `UserID` = %s
+            """,(new_qty, product_id, current_user.id))
+        
+        connection.close()
 
-    return redirect("/cart")
+        return redirect("/cart")
 
 
 @app.route("/cart/<product_id>/remove", methods=['POST'])
 @login_required
 def remove_from_cart(product_id):
 
-    connection = connect_db()
+        connection = connect_db()
 
-    cursor = connection.cursor()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-        DELETE FROM Cart
-        WHERE ProductID = %s AND UserID = %s
-  """, (product_id, current_user.id))
-    
-    connection.close()
+        cursor.execute("""
+            DELETE FROM Cart
+            WHERE ProductID = %s AND UserID = %s
+    """, (product_id, current_user.id))
+        
+        connection.close()
 
-    return redirect ("/cart")
+        return redirect ("/cart")
 
 @app.route("/checkout", methods =["POST","GET"])
 @login_required
 def checkout():
-    connection = connect_db()
+        connection = connect_db()
 
-    cursor = connection.cursor()
+        cursor = connection.cursor()
 
-    cursor.execute("""
-        SELECT * FROM `Cart`
-        Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
-        WHERE `UserID` = %s             
-                   
-    """,(current_user.id))
+        cursor.execute("""
+            SELECT * FROM `Cart`
+            Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
+            WHERE `UserID` = %s             
+                    
+        """,(current_user.id))
 
-    result = cursor.fetchall()
+        result = cursor.fetchall()
 
-    if request.method == 'POST':
-        # create the sale in the database
-        cursor.execute("INSERT INTO `Sale` (`UserID`) VALUES (%s)", ( current_user.id, ) )
-        #store products bought
-        sale = cursor.lastrowid
+        if request.method == 'POST':
+            # create the sale in the database
+            cursor.execute("INSERT INTO `Sale` (`UserID`) VALUES (%s)", ( current_user.id, ) )
+            #store products bought
+            sale = cursor.lastrowid
+            for item in result:
+                cursor.execute( """
+                    INSERT INTO `SaleCart` 
+                        (`SaleID`,`ProductID`, `Quantity`)
+                    VALUES
+                        (%s,%s,%s)
+                                
+                            
+                            """  , (sale, item['ProductID'], item['Quantity']))
+            # empty cart
+            cursor.execute("DELETE FROM `Cart` WHERE `UserID` = %s", (current_user.id,))
+            #thank you screen
+
+            return redirect('/thank-you')       
+
+        total = 0
+
         for item in result:
-            cursor.execute( """
-                 INSERT INTO `SaleCart` 
-                      (`SaleID`,`ProductID`, `Quantity`)
-                 VALUES
-                      (%s,%s,%s)
-                               
-                           
-                        """  , (sale, item['ProductID'], item['Quantity']))
-        # empty cart
-        cursor.execute("DELETE FROM `Cart` WHERE `UserID` = %s", (current_user.id,))
-        #thank you screen
+            total += item["Price"] * item["Quantity"]
 
-        return redirect('/thank-you')       
+        connection.close()
 
-    total = 0
-
-    for item in result:
-        total += item["Price"] * item["Quantity"]
-
-    connection.close()
-
-    return render_template("checkout.html.jinja", cart=result, total=total)
+        return render_template("checkout.html.jinja", cart=result, total=total)
 
 
 @app.route("/thank-you")
 def thankyou():
-    return render_template("thankyou.html.jinja")
+        return render_template("thankyou.html.jinja")
 

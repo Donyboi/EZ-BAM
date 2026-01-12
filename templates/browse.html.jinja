@@ -20,6 +20,12 @@
       
       </div>
     </section>
+    
+    {%for message in get_flashed_messages() %}
+    <li>{{ message }}</li>
+    
+
+    {%endfor%}
     <main class = "grid grid-cols-4 gap-3 max-w-7xl mx-auto py-6 mb-5">
       {%for x in products %}
         
@@ -29,6 +35,8 @@
           <div class="text-right font-bold text-sm">$ {{x["Price"]}}</div>
           </a>
       {%endfor%}
+
+      
     </main>
   </body>
 </html>
