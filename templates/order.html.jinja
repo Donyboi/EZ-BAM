@@ -15,50 +15,35 @@
 
     <h1 class="text-3xl font-bold mb-8">My Orders</h1>
 
-    {% if orders and orders|length > 0 %}
+    {% if order|length > 0 %}
 
       <div class="space-y-6">
 
-        {% for order in orders %}
+        {% for item in order %}
         <div class="bg-gray-800 rounded-xl shadow-lg p-6">
 
-          <!-- Order Header -->
+          
           <div class="flex justify-between items-center border-b border-gray-600 pb-4 mb-4">
             <div>
-              <p class="font-semibold">Order #{{ order.id }}</p>
+              <p class="font-semibold">Order # {{item['ID']}}</p>
               <p class="text-sm text-gray-400">
-                Placed on {{ order.date }}
+              
               </p>
+              
             </div>
+            Placed on {{item["Timestamp"].strftime("%b %d")}}
 
             <div class="text-right">
-              <p class="font-bold text-blue-400">${{ order.total }}</p>
-              <p class="text-sm text-gray-400">{{ order.status }}</p>
+            
+              <p class="font-bold text-blue-400">total: $ {{item["Total"]}}</p>
+              <p class="text-sm text-gray-400"></p>
             </div>
+           
           </div>
-
-          <!-- Items -->
-          <div class="space-y-3">
-            {% for item in order.items %}
-            <div class="flex items-center gap-4">
-              <img src="{{ item.image }}"
-                   class="w-16 h-16 object-cover rounded-lg border border-gray-600">
-
-              <div class="flex-1">
-                <p class="font-semibold">{{ item.name }}</p>
-                <p class="text-sm text-gray-400">
-                  Qty: {{ item.quantity }} × ${{ item.price }}
-                </p>
-              </div>
-
-              <div class="font-semibold text-gray-300">
-                ${{ item.quantity * item.price }}
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-
+          
+        <p class="font-bold text-blue-400">items: {{item["Quantity"]}}</p>
         </div>
+        
         {% endfor %}
 
       </div>
