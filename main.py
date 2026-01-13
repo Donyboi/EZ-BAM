@@ -331,11 +331,11 @@ def order():
             SUM(`SaleCart`.Quantity) AS 'Quantity',
             SUM(`SaleCart`.`Quantity` * `Product`.`Price`) AS 'Total'
         FROM `Sale`
-        JOIN `SaleCart` ON `SaleCart`.`SaleID = `Sale.`ID`
-        JOIN `Product` ON `Product`.`ID` = `SaleProduct`. `ProductID`
+        JOIN `SaleCart` ON `SaleCart`.`SaleID` = `Sale`.`ID`
+        JOIN `Product` ON `Product`.`ID` = `SaleCart`.`ProductID`
         WHERE `UserID` =%s
-        GROUP BY `Sale`.ID`;
-    """,(current_user.id))
+        GROUP BY `Sale`.`ID`;
+    """,(current_user.id,))
 
     results = cursor.fetchall()
 
