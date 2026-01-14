@@ -84,23 +84,38 @@ def browse():
     return render_template("browse.html.jinja", products=result)
 
 
-@app.route("/product/<product_id>")
+@app.route("/product/<product_id>", methods=["GET"])
+@login_required
 def product_page(product_id):
 
     connection =connect_db()
 
     cursor = connection.cursor()
 
-    cursor.execute( "SELECT * FROM `Product` WHERE `ID` = %s",(product_id))
+    cursor.execute( """SELECT * FROM `Product` WHERE `ID` = %s
+                    Join `Product` ON `Product`.`ID` = `Cart`.`ProductID`
+                   """,(product_id))
+
 
     result = cursor.fetchone()
 
-    connection.close()
+    
 
     if result is None:
+        connection.close()
         abort(404)
+    
 
-    return render_template("product.html.jinja", product=result)
+    cursor.execute("SELECT * FROM `Review` WHERE `ProductID` = %s ", (product_id,))
+    reviews = cursor.fetchall()
+
+    connection.close()
+
+
+
+
+    return render_template("product.html.jinja", product=result, reviews = reviews)
+
 
 @app.route("/product/<product_id>/add_to_cart", methods=["POST"])
 @login_required
@@ -284,9 +299,9 @@ def checkout():
         result = cursor.fetchall()
 
         if request.method == 'POST':
-            # create the sale in the database
+            
             cursor.execute("INSERT INTO `Sale` (`UserID`) VALUES (%s)", ( current_user.id, ) )
-            #store products bought
+            
             sale = cursor.lastrowid
             for item in result:
                 cursor.execute( """
