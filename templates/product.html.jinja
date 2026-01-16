@@ -78,20 +78,22 @@
       <div class="border-b border-gray-700 pb-4">
         <div class="flex justify-between items-center mb-2">
           <p class="font-semibold text-gray-200">
-            {{review['Comment']}}
-            {{review['Rating']}}
+          User: {{review['Username']}}
+          <br>
+            Comment:{{review['Comment']}}
+            <br>
+            Rating:{{review['Rating']}}★
+            
           </p>
           <p class="text-sm text-gray-400">
-            {{ review.TimeStamp }}
+            {{ review.TimeStamp.strftime('%B %d, %Y, %I:%M %p') }}
           </p>
         </div>
 
       
         
 
-        <p class="text-gray-300">
-          {{ review.comment }}
-        </p>
+        <p class="text-gray-300">{{ review.comment }}</p>
       </div>
       {% endfor %}
 
@@ -106,7 +108,7 @@
   
   {% if current_user.is_authenticated %}
   <div class="mt-10 border-t border-gray-700 pt-6">
-  {{current_user.}}
+  
     <h3 class="text-xl font-semibold mb-4">Leave a Review</h3>
 
     <form method="post" action="/product/{{ product['ID'] }}/review" class="space-y-4">
@@ -133,8 +135,7 @@
                   required></textarea>
       </div>
 
-      <button
-        class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow">
+      <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow">
         Submit Review
       </button>
 
